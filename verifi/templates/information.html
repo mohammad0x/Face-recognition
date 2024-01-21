@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .grid-item-false {
+            border: 1px solid #f71707;
+            padding: 10px;
+            text-align: center;
+        }
+        .grid-item-true {
+            border: 1px solid #27f707;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .grid-item img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .details {
+            margin-top: 10px;
+        }
+    </style>
+    <title>Picture Grid</title>
+</head>
+<body>
+
+<div class="grid-container">
+    <!-- Picture 1 -->
+    {% for result in trueResults %}
+
+        <div class="grid-item-true">
+            <img src="{{ result.image }}" alt="{{ result.name }}">
+            <div class="details">{{ result.name }}</div>
+            <div class="details">{{ result.date }}</div>
+        </div>
+    {% endfor %}
+
+    {% for result in falseResult %}
+
+        <div class="grid-item-false">
+            <img src="{{ result.image }}" alt="{{ result.name }}">
+            <div class="details">{{ result.name }}</div>
+            <div class="details">{{ result.date }}</div>
+        </div>
+    {% endfor %}
+        
+    <!-- Repeat similar blocks for Picture 3 to Picture 9 -->
+    <script>
+        // Refresh the page every 5 seconds (adjust the time interval as needed)
+        setTimeout(function () {
+            location.reload();
+        }, 5000);
+    </script>
+</div>
+
+</body>
+</html>
