@@ -6,6 +6,7 @@ from .models import *
 from celery import shared_task
 import os
 import logging
+from  .views import *
 import time
 
 logger = logging.getLogger(__name__)
@@ -112,24 +113,22 @@ def faceRecognition(name , image):
             db_face.append(np.array(dbmodel_2))
         # time.sleep(2)
 
-        # print('11')
         for item in range(len(db_face)):
             # for number in range(len(new_face)):
             #     if len(new_face[number]) != 0:
-            # print('11.5')
             distance = np.linalg.norm(db_face[item] - point)# new_face[number]
-            # print('22')
             if distance < threshold:
                 # try:
-                    # time.sleep(2)
-                if Result.objects.create(name=name_clean[item], recognition=name):#name_face[number]
-                    Face.objects.filter(name=name).update(verify=True)
+                    if Result.objects.filter(recognition=name).exists():
+                        video_feed()
+                    if Result.objects.create(name=name_clean[item], recognition=name):#name_face[number]
+                            Face.objects.filter(name=name).update(verify=True)
+                            # cv2.imwrite(f"./media/old/{name}", image)
                                 #shutil.move(f'{name_face[number]}',
                                        # f'./{name_face[number].split("/")[1]}/old/')
-                    print('save')
-                    break
 
-
+            else:
+                video_feed()
 
                         #         if f'./old/{name_face[number].split("/")[3]}':
                         #             # print(f'./media/crop/{name_face[number].split("/")[3]}')
@@ -137,7 +136,7 @@ def faceRecognition(name , image):
                         #
                 # except:
                 #     print('not')
-                #     continue
+                #     break
 
 
         #     else:

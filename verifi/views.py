@@ -16,10 +16,10 @@ def model(request):
         Dbmodel.objects.create(name=name, image=image)
     return render(request , 'model.html')
 
-@never_cache
+# @never_cache
 def VideoView(request):
     countdown = 1
-    # faceRecognition.apply_async(countdown=countdown)   #apply_async()
+    # faceRecognition().apply_async(countdown=countdown)   #apply_async()
     return render(request , 'stream.html' )
 
 def gen(camera):
