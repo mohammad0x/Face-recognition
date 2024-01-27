@@ -1,9 +1,13 @@
+import pytz
 from django.db import models
 
 # Create your models here.
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from jdatetime import datetime as jdatetime_datetime
+from jalali_date import datetime2jalali, date2jalali
+
 
 
 class MyUserManager(BaseUserManager):
@@ -86,15 +90,17 @@ class Dbmodel(models.Model):
 
 class Face(models.Model):
     name = models.CharField(max_length=50,unique=True)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100)
     verify = models.BooleanField(default=False)
     noise = models.BooleanField(default=False)
     point =models.TextField(null=True , blank=False)
-    
+
+
+
 class Result(models.Model):
     name = models.CharField(max_length=100)
     recognition = models.CharField(max_length=100,unique=True)
-    date = models.DateTimeField(auto_now_add=True)
+    date  = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100)
     noise = models.BooleanField(default=False)
 
     

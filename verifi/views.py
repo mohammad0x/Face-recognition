@@ -1,19 +1,31 @@
-from django.shortcuts import render
+from django.shortcuts import render , redirect
 from .camera import VideoCamera
 from .laboratory import savePoint
 from .recognition import faceRecognition
 from .models import *
 import time
+import cv2
 from django.http.response import StreamingHttpResponse
 from django.views.decorators.cache import never_cache
-
+from .extraction import Crop
 # Create your views here.
+
+def savePoint(request):
+    if request.method == "POST":
+        image = request.POST['image']
+        name = request.POST['name']
+        img = cv2.imread(f'./media/{image}')
+        face = Crop(name,img )
+    img = Dbmodel.objects.all()
+    return render(request,'save.html',{'img':img})
+
 
 def model(request):
     if request.method == 'POST':
         image = request.FILES['image']
         name = request.POST['name']
-        Dbmodel.objects.create(name=name, image=image)
+        Dbmodel.objects.create(name=name, image=image )
+        return redirect('verifi:savePoint')
     return render(request , 'model.html')
 
 
@@ -38,7 +50,7 @@ def face_Recognition(request):
 
 def information(request):
     res_t = Result.objects.filter(noise=False).order_by('-date')
-    res_f = Face.objects.filter(noise=True).order_by('-date')
+    res_f = Face.objects.filter(verify=False).order_by('-date')
     trueResult= []
     falseResult = []
     for result in res_t:

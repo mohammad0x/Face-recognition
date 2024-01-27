@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="" method="post">
+{% csrf_token %}
+    {% for img in img %}
+        <p>
+            <input type="text" name="image" value="{{ img.image }}" >
+            <input type="text" name="name" value="{{ img.name }}">
+        </p>
+        <input type="submit">
+    {% endfor %}
+</form>
+</body>
+</html>
