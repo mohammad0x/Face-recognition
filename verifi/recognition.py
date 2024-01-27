@@ -99,4 +99,5 @@ def faceRecognition(name , image):
                 video_feed()
 
 
+
 # celery -A FaceGuard worker -l info
