@@ -16,7 +16,7 @@ def model(request):
         Dbmodel.objects.create(name=name, image=image)
     return render(request , 'model.html')
 
-# @never_cache
+
 def VideoView(request):
     countdown = 1
     # faceRecognition().apply_async(countdown=countdown)   #apply_async()
@@ -37,15 +37,16 @@ def face_Recognition(request):
     return render(request , 'facerecognition.html')
 
 def information(request):
-    res_t = Result.objects.filter(noise=False).order_by('-date')[:9]
-    res_f = Face.objects.filter(noise=True).order_by('-date')[:9]
+    res_t = Result.objects.filter(noise=False).order_by('-date')
+    res_f = Face.objects.filter(noise=True).order_by('-date')
     trueResult= []
     falseResult = []
     for result in res_t:
-        trueResult.append({'image' : f"http://127.0.0.1:8000/{result.recognition.split('/')[1]}/old/{result.recognition.split('/')[3]}"
+        print(result.recognition)
+        trueResult.append({'image' : f"http://127.0.0.1:8000/media/old/{result.recognition}"
                      , 'name': result.name , 'date': result.date})
     for result in res_f:
-        falseResult.append({'image' : f"http://127.0.0.1:8000/{result.name.split('/')[1]}/unknow/{result.name.split('/')[3]}"
+        falseResult.append({'image' : f"http://127.0.0.1:8000/media/unknow/{result.name}"
                      , 'name': result.name , 'date': result.date})
 
     context = {
