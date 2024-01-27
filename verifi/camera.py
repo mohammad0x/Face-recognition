@@ -2,8 +2,6 @@ import cv2
 from django.http import HttpResponse
 import time
 import dlib
-import os
-import numpy as np
 from .models import *
 from .recognition import faceRecognition
 
@@ -44,7 +42,7 @@ def saveFace(name , image):
         if face:
 
                 Face.objects.create(name=f"{name}",noise=True)
-                faceRecognition(name,image)#.apply_async()#(name,image)
+                faceRecognition(name,image)
 
 
         else:
@@ -58,7 +56,7 @@ class VideoCamera(object):
         # Using OpenCV to capture from device 0. If you have trouble capturing
         # from a webcam, comment the line below out and use a video file
         # instead.
-        self.video = cv2.VideoCapture(1)#./rest2.mp4
+        self.video = cv2.VideoCapture('./rest2.mp4')#./rest2.mp4
         self.frame_count = 0
         # If you decide to use video.mp4, you must have this file in the folder
         # as the main.py.
