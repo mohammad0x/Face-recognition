@@ -1,8 +1,13 @@
 import dlib
 import cv2
 import numpy as np
+import shutil
+from .models import *
+from celery import shared_task
+import os
 import logging
 from  .views import *
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +43,6 @@ def extract_face_descriptor(image):
 def faceRecognition(name , image):
     while True:
         threshold = 0.4
-
 
 
         name_face = []
@@ -90,14 +94,15 @@ def faceRecognition(name , image):
             if distance < threshold:
                     if Result.objects.filter(recognition=name).exists():
                         video_feed()
-                    if Result.objects.create(name=name_clean[item], recognition=name):#name_face[number]
+                    if Result.objects.create(name=name_clean[item], recognition=name):
                             if Face.objects.filter(name=name).update(verify=True):
                                 cv2.imwrite(f"./media/old/{name}", image)
 
             else:
-                cv2.imwrite(f"./media/unknow/{name}", image)
-                video_feed()
+                if not Result.objects.filter(recognition=name).exists():
+                    cv2.imwrite(f"./media/unknow/{name}", image)
 
+                video_feed()
 
 
 # celery -A FaceGuard worker -l info
