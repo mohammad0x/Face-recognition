@@ -91,6 +91,7 @@ class Dbmodel(models.Model):
 class Face(models.Model):
     name = models.CharField(max_length=50,unique=True)
     date = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100)
+    time = models.TimeField(auto_now_add=timezone.now)
     verify = models.BooleanField(default=False)
     noise = models.BooleanField(default=False)
     point =models.TextField(null=True , blank=False)
@@ -101,6 +102,10 @@ class Result(models.Model):
     name = models.CharField(max_length=100)
     recognition = models.CharField(max_length=100,unique=True)
     date  = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100)
+    time = models.TimeField(auto_now_add=timezone.now)
     noise = models.BooleanField(default=False)
 
-    
+class Attendance(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    check_in_time = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100)
+    check_out_time = models.TimeField(auto_now_add=timezone.now)
