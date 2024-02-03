@@ -105,7 +105,11 @@ class Result(models.Model):
     time = models.TimeField(auto_now_add=timezone.now)
     noise = models.BooleanField(default=False)
 
+    def __str__(self) -> str:
+        return self.name
+
 class Attendance(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    check_in_time = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100)
-    check_out_time = models.TimeField(auto_now_add=timezone.now)
+    user = models.ForeignKey(Result , on_delete=models.CASCADE)
+    flag = models.BooleanField(default=False)
+    check_in_date = models.CharField( max_length=100 , unique=True)
+    check_in_time = models.TimeField(auto_now_add=timezone.now , unique=True)

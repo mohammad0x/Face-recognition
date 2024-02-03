@@ -1,13 +1,14 @@
-from django.shortcuts import render , redirect
+from django.shortcuts import render, redirect
 from .camera import VideoCamera
 from .laboratory import savePoint
 from .recognition import faceRecognition
 from .models import *
 import time
 import cv2
-from django.http.response import StreamingHttpResponse
+from django.http.response import StreamingHttpResponse, HttpResponse
 from django.views.decorators.cache import never_cache
 from .extraction import Crop
+from .attendance import attendance
 # Create your views here.
 
 def savePoint(request):
@@ -30,12 +31,14 @@ def model(request):
 
 
 def VideoView(request):
-    countdown = 1
+    countdown = 6
     # faceRecognition().apply_async(countdown=countdown)   #apply_async()
     return render(request , 'stream.html' )
 
 def gen(camera):
     while True:
+        countdown = 6
+        attendance.apply_async(countdown=countdown)
         frame = camera.get_frame()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
@@ -66,3 +69,4 @@ def information(request):
         'falseResult': falseResult,
     }
     return render(request , 'information.html' , context)
+
