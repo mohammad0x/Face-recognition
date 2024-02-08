@@ -113,3 +113,7 @@ class Attendance(models.Model):
     flag = models.BooleanField(default=False)
     check_in_date = models.CharField( max_length=100 , unique=True)
     check_in_time = models.TimeField(auto_now_add=timezone.now , unique=True)
+
+class Getdate(models.Model):
+    text = models.CharField(max_length=50)
+    date_time = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100, unique=True)

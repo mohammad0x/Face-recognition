@@ -31,8 +31,8 @@ def extract_face_descriptor(image):
     except:
         pass
     if len(faces) == 1:
-
-        landmarks = predictor(image, faces[0])
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        landmarks = predictor(gray, faces[0])
 
         face_descriptor = face_recognizer.compute_face_descriptor(image, landmarks)
         return np.array(face_descriptor)
