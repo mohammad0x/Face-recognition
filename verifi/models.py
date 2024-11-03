@@ -9,7 +9,6 @@ from jdatetime import datetime as jdatetime_datetime
 from jalali_date import datetime2jalali, date2jalali
 
 
-
 class MyUserManager(BaseUserManager):
     def create_user(self, email, username, password=None):
         """
@@ -76,44 +75,45 @@ class MyUser(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-    
-    
+
+
 class Dbmodel(models.Model):
     name = models.CharField(max_length=50)
     image = models.ImageField(upload_to='faces/')
     date = models.DateTimeField(auto_now_add=True)
-    point =models.TextField(null=True , blank=False)
-    
+    point = models.TextField(null=True, blank=False)
+
     def __str__(self) -> str:
         return self.name
 
 
 class Face(models.Model):
-    name = models.CharField(max_length=50,unique=True)
-    date = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100)
+    name = models.CharField(max_length=50, unique=True)
+    date = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y'), max_length=100)
     time = models.TimeField(auto_now_add=timezone.now)
     verify = models.BooleanField(default=False)
     noise = models.BooleanField(default=False)
-    point =models.TextField(null=True , blank=False)
-
+    point = models.TextField(null=True, blank=False)
 
 
 class Result(models.Model):
     name = models.CharField(max_length=100)
-    recognition = models.CharField(max_length=100,unique=True)
-    date  = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100)
+    recognition = models.CharField(max_length=100, unique=True)
+    date = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y'), max_length=100)
     time = models.TimeField(auto_now_add=timezone.now)
     noise = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.name
 
+
 class Attendance(models.Model):
-    user = models.ForeignKey(Result , on_delete=models.CASCADE)
+    user = models.ForeignKey(Result, on_delete=models.CASCADE)
     flag = models.BooleanField(default=False)
-    check_in_date = models.CharField( max_length=100 , unique=True)
-    check_in_time = models.TimeField(auto_now_add=timezone.now , unique=True)
+    check_in_date = models.CharField(max_length=100, unique=True)
+    check_in_time = models.TimeField(auto_now_add=timezone.now, unique=True)
+
 
 class Getdate(models.Model):
     text = models.CharField(max_length=50)
-    date_time = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y') , max_length=100, unique=True)
+    date_time = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y'), max_length=100, unique=True)

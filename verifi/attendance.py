@@ -5,31 +5,32 @@ import os
 import shutil
 import threading
 
-
-
 folder_path = './media/unknow/'
 folder_path1 = './media/old/'
 try:
     Getdate.objects.create(text='remove')
 except:
     pass
+
+
 @shared_task
 def attendance():
     res = Result.objects.filter(noise=False)
     for result in res:
         try:
-            Attendance.objects.create(user_id = result.id,check_in_date=jdatetime_datetime.now().strftime('%d %B %Y') )
+            Attendance.objects.create(user_id=result.id, check_in_date=jdatetime_datetime.now().strftime('%d %B %Y'))
         except:
             pass
         delete_folder_contents(folder_path)
         break
+
 
 def delete_folder_contents(folder_path):
     date = Getdate.objects.all()
     for date in date:
         res = date.date_time
         result = res.split(" ")
-        if int(result[0]) == int(result[0])+2 :
+        if int(result[0]) == int(result[0]) + 2:
             for filename in os.listdir(folder_path):
                 file_path = os.path.join(folder_path, filename)
                 try:
@@ -49,7 +50,4 @@ def delete_folder_contents(folder_path):
                 except Exception as e:
                     print(f"Failed to delete {file_path}. Reason: {e}")
 
-
-
-
-# celery -A FaceGuard worker -l info
+# 00000000000000000000000000000000000000000000000000000000000000000000000000
