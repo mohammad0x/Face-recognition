@@ -51,3 +51,17 @@ def delete_folder_contents(folder_path):
                     print(f"Failed to delete {file_path}. Reason: {e}")
 
 # 00000000000000000000000000000000000000000000000000000000000000000000000000
+#         w, h = frame.shape[:2]
+#         w_new = 2000
+#
+#         retion = w / h
+#
+#         h_new = int(w_new * retion)
+#
+#         frame = cv2.resize(frame, (w_new, h_new), interpolation=cv2.INTER_LINEAR)
+#
+#         w, h = frame.shape[:2]
+#
+#         n_retion = h / w
+#         frame = frame[100:700, 500:500 + math.floor((700 - 100) * n_retion)]
+#

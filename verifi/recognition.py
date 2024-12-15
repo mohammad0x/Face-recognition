@@ -92,7 +92,7 @@ def faceRecognition(name , image):
             distance = np.linalg.norm(db_face[item] - point)
             if distance < threshold:
                     if Result.objects.filter(recognition=name).exists():
-                        print('1111111111')
+                        # print('1111111111')
                         # video_feed()
                         break
                     if Result.objects.create(name=name_clean[item], recognition=name):
