@@ -100,18 +100,30 @@ class Result(models.Model):
     name = models.CharField(max_length=100)
     recognition = models.CharField(max_length=100, unique=True)
     date = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y'), max_length=100)
-    time = models.TimeField(auto_now_add=timezone.now)
+    time = models.TimeField(auto_now_add=True)
     noise = models.BooleanField(default=False)
+    location = models.CharField(max_length=2, null=True, blank=False)
 
     def __str__(self) -> str:
         return self.name
 
 
 class Attendance(models.Model):
+    STATUS_CHOICES = (
+        ('1', 'humanities'),
+        ('2', 'library'),
+        ('3', 'administrative'),
+        ('4', 'engineering'),
+        ('5', 'sama'),
+        ('6', 'medical sciences'),
+    )
+
     user = models.ForeignKey(Result, on_delete=models.CASCADE)
     flag = models.BooleanField(default=False)
-    check_in_date = models.CharField(max_length=100, unique=True)
+    check_in_date = models.CharField(max_length=100)
     check_in_time = models.TimeField(auto_now_add=timezone.now, unique=True)
+    location = models.CharField(max_length=5, choices=STATUS_CHOICES)
+    login_or_logout = models.BooleanField(default=False)
 
 
 class Getdate(models.Model):

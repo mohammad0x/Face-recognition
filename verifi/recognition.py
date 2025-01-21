@@ -6,7 +6,12 @@ from .models import *
 from celery import shared_task
 import os
 import logging
-from  .views import *
+from datetime import timedelta
+from .views import *
+from django.utils.timezone import now , make_aware
+from datetime import datetime, timedelta
+from jdatetime import datetime as jdatetime_datetime
+from django.utils import timezone
 import time
 
 logger = logging.getLogger(__name__)
@@ -25,12 +30,14 @@ face_recognizer = dlib.face_recognition_model_v1(
 detector = dlib.get_frontal_face_detector()
 
 
-def extract_face_descriptor(image):
+def extract_face_descriptor(name, image):
     try:
         faces = detector(image)
     except:
         pass
-    if len(faces) == 1:
+
+    if len(faces) > 0:
+
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         landmarks = predictor(gray, faces[0])
 
@@ -39,35 +46,30 @@ def extract_face_descriptor(image):
     else:
         return False
 
+
 # @shared_task
-def faceRecognition(name , image):
+def faceRecognition(name, image):
     while True:
         threshold = 0.6
-
 
         name_face = []
         db_face = []
         reference_image_new = []
 
+        point = extract_face_descriptor(name, np.array(image))
+        # if Face.objects.filter(name=name, noise=True):
+        #     Face.objects.filter(name=name).update(point=point)
 
+            # name_face.append(name)
 
+        # try:
+        #     Face.objects.filter(name=name).update(point=point)
+        # except:
+        #     pass
 
-        point = extract_face_descriptor(np.array(image))
-        if Face.objects.filter(name=name , noise=True):
-            Face.objects.filter(name=name).update(point=point)
-
-            name_face.append(name)
-
-        try:
-            Face.objects.filter(name=name).update(point=point)
-        except:
-            pass
-
-
-        facee = Face.objects.filter(verify=False)
-        for faces in facee:
-            reference_image_new.append(faces.point)
-
+        # facee = Face.objects.filter(verify=False)
+        # for faces in facee:
+        #     reference_image_new.append(faces.point)
 
         clean = []
         name_clean = []
@@ -91,28 +93,41 @@ def faceRecognition(name , image):
         for item in range(len(db_face)):
             distance = np.linalg.norm(db_face[item] - point)
             if distance < threshold:
-                    if Result.objects.filter(recognition=name).exists():
-                        # print('1111111111')
-                        # video_feed()
+                if Result.objects.filter(recognition=name).exists():
+                    break
+                #
+                # time =  timezone.now()
+
+                last_entry = Result.objects.filter(name=name_clean[item] , date = jdatetime_datetime.now().strftime('%d %B %Y')).order_by('-time').first()
+                if last_entry:
+
+                    last_entry_datetime = datetime.combine(now().date(), last_entry.time)
+                    last_entry_datetime = make_aware(last_entry_datetime)
+                    current_datetime = now()
+
+                    time_diff = current_datetime - last_entry_datetime
+                    if time_diff.total_seconds() < 10:
+                        print('break')
                         break
-                    if Result.objects.create(name=name_clean[item], recognition=name):
-                            if Face.objects.filter(name=name).update(verify=True):
-                                cv2.imwrite(f"./media/old/{name}", image)
-                                print('old')
-                                # print('22222222222')
-                                break
-                            # video_feed()
+
+                if Result.objects.create(name=name_clean[item], recognition=name):
+                    # if Face.objects.filter(name=name).update(verify=True):
+                    # cv2.imwrite(f"./media/old/{name}", image)
+                    print('old')
+
+
+
 
             else:
-                # print('not')
+
                 if not Result.objects.filter(recognition=name).exists():
-                    cv2.imwrite(f"./media/unknow/{name}", image)
+                    # cv2.imwrite(f"./media/unknow/{name}", image)
                     print('unknow')
-                    # print('3333333333333')
+
                     continue
             # break
             # continue
-                # video_feed()
+            # video_feed()
         break
 
 # celery -A FaceGuard worker -l info
