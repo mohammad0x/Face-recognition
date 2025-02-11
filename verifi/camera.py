@@ -1,54 +1,12 @@
 import cv2
 from django.http import HttpResponse
-import time
 import dlib
-from .models import *
-import math
 from .recognition import faceRecognition
 
 error_face = []
 countdown = 6
 face_cascade = cv2.CascadeClassifier("./haarcascade_frontalface_default.xml")
 detector = dlib.get_frontal_face_detector()
-
-
-# def saveCrop(name, imge):
-#     if imge is not None:
-#         faces = face_cascade.detectMultiScale(
-#             imge, scaleFactor=1.1, minNeighbors=5, minSize=(40, 40)
-#         )
-#         multipale = []
-#
-#         for item in faces:
-#             if len(item) == 0:
-#                 cv2.imwrite(f"./media/false/{name}", faces)
-#
-#             else:
-#                 multipale.append(item)
-#
-#             p = 0
-#             if faces is not tuple:
-#                 for x, y, w, h in multipale:
-#                     face_roi = imge[y:y + h, x:x + w]
-#                     p += 1
-#                     saveFace(f"{p}_{name}", face_roi)
-#
-#
-# def saveFace(name, image):
-#     try:
-#         face = detector(image)
-#         if face:
-#
-#             print(type(face))
-#             print(type(image))
-#             Face.objects.create(name=f"{name}", noise=True)
-#             faceRecognition(name, image)
-#
-#
-#         else:
-#             print('no face')
-#     except:
-#         print('no face1')
 
 
 class VideoCamera(object):
@@ -65,7 +23,6 @@ class VideoCamera(object):
     def __del__(self):
         self.video.release()
 
-
     def get_frame(self):
         success, frame = self.video.read()
         if not success:
@@ -74,34 +31,18 @@ class VideoCamera(object):
         # so we must encode it into JPEG in order to correctly display the
         # video stream.
 
-
-
         # w, h = frame.shape[:2]
         #
         # n_retion = h / w
         # frame = frame[100:700, 500:500+math.floor((700-100)*n_retion)]
 
         self.frame_count1 += 1
-        # resize and shape [2] frame  video stream
-        # print(time.time() % 2)
-        # if time.time() % 2 < 0.1:
-        if self.frame_count1 % 10 == 0 :
+        if self.frame_count1 % 10 == 0:
             self.frame_count += 1
             print(self.frame_count)
 
-            # saveFace(f"frame_{self.frame_count}.jpg", frame)
             faceRecognition(f"frame_{self.frame_count}.jpg", frame)
 
-        # w, h = frame.shape[:2]
-        # new_w = int(w * 2.0)
-        # new_h = int(h * 2.0)
-        #
-        # frame = cv2.resize(frame, (new_w, new_h), interpolation=cv2.INTER_AREA)
-        # #
-        # sX, sY = 300, 300
-        # eX, eY = 800, 800
-        #
-        # frame = frame[sY:eY, sX:eX]
         ret, jpeg = cv2.imencode('.jpg', frame)
 
         return jpeg.tobytes()

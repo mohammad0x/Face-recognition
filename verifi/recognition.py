@@ -3,16 +3,11 @@ import cv2
 import numpy as np
 import shutil
 from .models import *
-from celery import shared_task
-import os
 import logging
-from datetime import timedelta
 from .views import *
-from django.utils.timezone import now , make_aware
+from django.utils.timezone import now, make_aware
 from datetime import datetime, timedelta
 from jdatetime import datetime as jdatetime_datetime
-from django.utils import timezone
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -47,33 +42,17 @@ def extract_face_descriptor(name, image):
         return False
 
 
-# @shared_task
 def faceRecognition(name, image):
     while True:
         threshold = 0.6
 
-        name_face = []
         db_face = []
-        reference_image_new = []
 
         point = extract_face_descriptor(name, np.array(image))
 
         if point is False:
             print('None')
             break
-        # if Face.objects.filter(name=name, noise=True):
-        #     Face.objects.filter(name=name).update(point=point)
-
-            # name_face.append(name)
-
-        # try:
-        #     Face.objects.filter(name=name).update(point=point)
-        # except:
-        #     pass
-
-        # facee = Face.objects.filter(verify=False)
-        # for faces in facee:
-        #     reference_image_new.append(faces.point)
 
         clean = []
         name_clean = []
@@ -99,10 +78,10 @@ def faceRecognition(name, image):
             if distance < threshold:
                 if Result.objects.filter(recognition=name).exists():
                     break
-                #
-                # time =  timezone.now()
 
-                last_entry = Result.objects.filter(name=name_clean[item] , date = jdatetime_datetime.now().strftime('%d %B %Y')).order_by('-time').first()
+                last_entry = Result.objects.filter(name=name_clean[item],
+                                                   date=jdatetime_datetime.now().strftime('%d %B %Y')).order_by(
+                    '-time').first()
                 if last_entry:
 
                     last_entry_datetime = datetime.combine(now().date(), last_entry.time)
@@ -115,7 +94,6 @@ def faceRecognition(name, image):
                         break
 
                 if Result.objects.create(name=name_clean[item], recognition=name):
-                    # if Face.objects.filter(name=name).update(verify=True):
                     # cv2.imwrite(f"./media/old/{name}", image)
                     print('old')
 

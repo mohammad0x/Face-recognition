@@ -87,15 +87,6 @@ class Dbmodel(models.Model):
         return self.name
 
 
-class Face(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    date = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y'), max_length=100)
-    time = models.TimeField(auto_now_add=timezone.now)
-    verify = models.BooleanField(default=False)
-    noise = models.BooleanField(default=False)
-    point = models.TextField(null=True, blank=False)
-
-
 class Result(models.Model):
     name = models.CharField(max_length=100)
     recognition = models.CharField(max_length=100, unique=True)
