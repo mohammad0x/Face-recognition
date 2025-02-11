@@ -8,7 +8,14 @@ urlpatterns = [
 
     path('stream/' , VideoView , name='VideoView'),
     path('video_feed/', video_feed, name='video_feed'),
+
+
     path('createModel/',model , name='model' ),
+    path('camera_view/<str:personnelNumber>',camera_view , name='camera_view' ),
+    path('save_photo/',save_photo , name='save_photo' ),
+    path('uploadImage/<str:personnelNumber>' , uploadImage , name='uploadImage'),
+
+
     path('savePoint/',savePoint , name='savePoint' ),
     path('faceRecognition/',face_Recognition , name='faceRecognition' ),
     path('information/',information , name='information' ),

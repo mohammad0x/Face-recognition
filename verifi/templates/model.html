@@ -4,21 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+        .form{
+            position: relative;
+            border: solid black;
+            color: chocolate;
+            margin-left: 2.5rem;
+            margin-top: 2.5rem;
+            margin-right: 2.5rem;
+        }
+        .item{
+            
+            margin-left: 10.5rem;
+        }
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+    </style>
 </head>
 <body>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <p>
-            <input type="file" name="image">
-        </p>
-        <p>
-            <lable>name picture: </lable>
-            <input type="text" name="name">
-        </p>
-        <p>
-            <input type="submit" value="send">
-        </p>
-            
+
+        <div class="form">
+            <p class="item">
+                <lable>نام نام خانوادگی: </lable>
+                <input type="text" name="name">
+            </p>
+
+            <p class="item">
+                <lable>  کد دانشجویی: </lable>
+                <input type="text" name="personnelNumber">
+            </p>
+
+            <p class="item">
+                <lable> تاریخ تولد : </lable>
+                <input type="text" , name="date_of_birth">
+            </p>
+
+            <p class="item">
+                <lable> رشته : </lable>
+                <input type="text" name="field">
+            </p>
+
+            <p class="item">
+                <input type="submit" value="send">
+            </p>
+        </div>            
     </form>
 </body>
 </html>

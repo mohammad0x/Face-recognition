@@ -78,8 +78,11 @@ class MyUser(AbstractBaseUser):
 
 
 class Dbmodel(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100 , verbose_name="نام و نام خانوادگی")
     image = models.ImageField(upload_to='faces/')
+    personnelNumber = models.CharField(max_length=30 ,unique = True, verbose_name = "کد پرسنلی")
+    date_of_birth = models.CharField(max_length=30 , verbose_name="سال تولد")
+    field = models.CharField(max_length=50 , verbose_name = "رشته تحصیلی")
     date = models.DateTimeField(auto_now_add=True)
     point = models.TextField(null=True, blank=False)
 

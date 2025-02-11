@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پیغام و گزینه‌ها</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .response-container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .options {
+            margin-top: 1.5rem;
+        }
+        .options button {
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .options button:first-child {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .options button:last-child {
+            background-color: #6c757d;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="response-container">
+        <h2>پیغام</h2>
+        <p>اطلاعات شما با موفقیت ثبت شد!</p>
+        <div class="options">
+            <a href="{% url 'verifi:camera_view' personnelNumber  %}"><button> گرفتن عکس </button></a>
+            <a href="{% url 'verifi:uploadImage' personnelNumber  %}"> آپلود عکس</a>
+        </div>
+    </div>
+</body>
+</html>

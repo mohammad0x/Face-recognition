@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Camera</title>
+</head>
+<body>
+    <h1>Live Camera</h1>
+    <p>
+        <video id="video" width="480" height="350" autoplay></video>
+    </p>
+    <p>
+        <button id="capture">Capture Photo</button>
+    </p>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+    <script>
+        // Access the camera
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                console.error("Error accessing the camera: ", err);
+            });
+
+        // Capture the photo
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, 640, 480);
+
+            // Convert the canvas image to a data URL
+            const photo = canvas.toDataURL('image/png');
+
+            // Send the photo to the server
+            fetch('/save_photo/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: `photo=${encodeURIComponent(photo)}&personnelNumber=${encodeURIComponent({{personnelNumber}})}`,
+                
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Photo saved successfully!');
+                } else {
+                    alert('Error saving photo.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
