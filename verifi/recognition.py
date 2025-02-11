@@ -57,6 +57,10 @@ def faceRecognition(name, image):
         reference_image_new = []
 
         point = extract_face_descriptor(name, np.array(image))
+
+        if point is False:
+            print('None')
+            break
         # if Face.objects.filter(name=name, noise=True):
         #     Face.objects.filter(name=name).update(point=point)
 
