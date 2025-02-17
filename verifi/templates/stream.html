@@ -5,11 +5,12 @@
   <body>
     <h1>Video Live Stream</h1>
     <img src="{% url 'verifi:video_feed' %}">
+    {{ msg }}
   {% for result in results %}
       <p>
           <img src="{{ result.recognition }}" alt="">
       </p>
-      {% include 'information.html' %}
   {% endfor %}
+ 
   </body>
 </html>

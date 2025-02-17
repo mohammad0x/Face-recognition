@@ -42,7 +42,7 @@ class VideoCamera(object):
             print(self.frame_count)
 
             faceRecognition(f"frame_{self.frame_count}.jpg", frame)
-
+      
         ret, jpeg = cv2.imencode('.jpg', frame)
 
         return jpeg.tobytes()

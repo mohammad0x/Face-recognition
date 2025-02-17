@@ -101,6 +101,13 @@ class Result(models.Model):
     def __str__(self) -> str:
         return self.name
 
+class log(models.Model):
+    name = models.CharField(max_length=100)
+    status = models.CharField(max_length=100)
+    time = models.DateTimeField(auto_now_add=timezone.now)
+
+    def __str__(self):
+        return self.status
 
 class Attendance(models.Model):
     STATUS_CHOICES = (

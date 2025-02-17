@@ -6,8 +6,13 @@ from .models import *
 import logging
 from .views import *
 from django.utils.timezone import now, make_aware
+from django.shortcuts import render, redirect
 from datetime import datetime, timedelta
 from jdatetime import datetime as jdatetime_datetime
+import requests
+from django.contrib import messages
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +28,12 @@ face_recognizer = dlib.face_recognition_model_v1(
     "./dlib_face_recognition_resnet_model_v1.dat"
 )
 detector = dlib.get_frontal_face_detector()
+
+
+
+
+
+    
 
 
 def extract_face_descriptor(name, image):
@@ -51,7 +62,6 @@ def faceRecognition(name, image):
         point = extract_face_descriptor(name, np.array(image))
 
         if point is False:
-            print('None')
             break
 
         clean = []
@@ -90,12 +100,16 @@ def faceRecognition(name, image):
 
                     time_diff = current_datetime - last_entry_datetime
                     if time_diff.total_seconds() < 10:
-                        print('break')
-                        break
+                        log.objects.create(name=name_clean[item],status = 'duplicate')
+                        return 'duplicate'
+                        # break
 
                 if Result.objects.create(name=name_clean[item], recognition=name):
                     # cv2.imwrite(f"./media/old/{name}", image)
-                    print('old')
+
+                    log.objects.create(name=name_clean[item],status = 'create')
+                    cv2.imwrite(f"./media/old/photo.jpg", image)
+                    return 'create'
 
 
 
@@ -103,10 +117,11 @@ def faceRecognition(name, image):
             else:
 
                 if not Result.objects.filter(recognition=name).exists():
-                    # cv2.imwrite(f"./media/unknow/{name}", image)
-                    print('unknow')
-
-                    continue
+                    cv2.imwrite(f"./media/unknow/unknown.jpg", image)
+                    log.objects.create(name=name,status = 'unknown')
+                    
+                    return 'unknown'
+                    # continue
             # break
             # continue
             # video_feed()

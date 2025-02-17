@@ -16,8 +16,10 @@ urlpatterns = [
     path('uploadImage/<str:personnelNumber>' , uploadImage , name='uploadImage'),
 
 
-    path('savePoint/',savePoint , name='savePoint' ),
+    # path('savePoint/',savePoint , name='savePoint' ),
     path('faceRecognition/',face_Recognition , name='faceRecognition' ),
-    path('information/',information , name='information' ),
+    # path('information/',information , name='information' ),
+    path('log/' , logView , name='log'),
+    path('result/',result,name='result')
 
 ]
