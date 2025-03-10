@@ -11,5 +11,22 @@ class adminAttendance(admin.ModelAdmin):
 
 admin.site.register(Attendance, adminAttendance)
 
+
+class adminResult(admin.ModelAdmin):
+    list_display = ('name' , 'recognition' , 'date' , 'time')
+    list_filter = ('date' , 'time' , 'noise')
+    search_fields = ['name']
+
+
+admin.site.register(Result, adminResult)
+
+
+class adminlog(admin.ModelAdmin):
+    list_display = ('name' , 'status' , 'time')
+    list_filter = ['time']
+    search_fields = ['name']
+
+
+admin.site.register(log, adminlog)
+
 admin.site.register(Dbmodel)
-admin.site.register(Result)

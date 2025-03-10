@@ -101,6 +101,7 @@ def faceRecognition(name, image):
                     time_diff = current_datetime - last_entry_datetime
                     if time_diff.total_seconds() < 10:
                         log.objects.create(name=name_clean[item],status = 'duplicate')
+                        cv2.imwrite(f"./media/old/photo.jpg", image)
                         return 'duplicate'
                         # break
 
