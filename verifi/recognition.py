@@ -103,11 +103,9 @@ def faceRecognition(name, image):
                         log.objects.create(name=name_clean[item],status = 'duplicate')
                         cv2.imwrite(f"./media/old/photo.jpg", image)
                         return 'duplicate'
-                        # break
+                  
 
                 if Result.objects.create(name=name_clean[item], recognition=name):
-                    # cv2.imwrite(f"./media/old/{name}", image)
-
                     log.objects.create(name=name_clean[item],status = 'create')
                     cv2.imwrite(f"./media/old/photo.jpg", image)
                     return 'create'
@@ -116,16 +114,21 @@ def faceRecognition(name, image):
 
 
             else:
+                pass
 
-                if not Result.objects.filter(recognition=name).exists():
-                    cv2.imwrite(f"./media/unknow/unknown.jpg", image)
-                    log.objects.create(name=name,status = 'unknown')
-                    
-                    return 'unknown'
-                    # continue
-            # break
-            # continue
-            # video_feed()
+        # unknown
+
+        if not Result.objects.filter(recognition=name).exists():
+            cv2.imwrite(f"./media/unknow/unknown.jpg", image)
+            log.objects.create(name=name,status = 'unknown')   
+            return 'unknown'
+
+
         break
+
+
+            
+       
+        
 
 # celery -A FaceGuard worker -l info
