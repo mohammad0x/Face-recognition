@@ -3,6 +3,7 @@ from .camera import VideoCamera
 from .laboratory import savePoint
 from .recognition import faceRecognition
 from .models import *
+from django.urls import reverse
 import time
 import numpy as np
 from PIL import Image
@@ -15,10 +16,7 @@ from django.http import JsonResponse
 from django.http.response import StreamingHttpResponse, HttpResponse
 from .recognition import extract_face_descriptor
 from .attendance import attendance
-
-
-def camera_view(request, personnelNumber):
-    return render(request, 'camera.html', {'personnelNumber': personnelNumber})
+from .picture import PictureCamera
 
 
 @csrf_exempt
@@ -28,6 +26,8 @@ def save_photo(request):
         personnelNumber = request.POST['personnelNumber']
 
         if photo_data and personnelNumber:
+            
+
             format, imgstr = photo_data.split(';base64,')
             ext = format.split('/')[-1]
             img_data = base64.b64decode(imgstr)
@@ -39,9 +39,18 @@ def save_photo(request):
 
             image = cv2.imread('./media/photos/photo.jpg')
             result = extract_face_descriptor(personnelNumber, np.array(image))
-            Dbmodel.objects.filter(personnelNumber=personnelNumber).update(point=result)
+            outcome = Dbmodel.objects.filter(personnelNumber=personnelNumber).update(point=result)
+            
+            if outcome == 1 :
+                if Dbmodel.objects.filter(personnelNumber=personnelNumber  , point = False):
+                    return JsonResponse({'status': 'False'})
 
-            return JsonResponse({'status': 'success', 'path': photo_path})
+                return JsonResponse({'status': 'success', 
+                                 'path': photo_path,
+                                 'redirect_url': reverse('verifi:createModel'),
+                                 })
+           
+
     return JsonResponse({'status': 'error'}, status=400)
 
 
@@ -103,6 +112,16 @@ def gen(camera):
 def video_feed(request):
     return StreamingHttpResponse(gen(VideoCamera()),
                                  content_type='multipart/x-mixed-replace; boundary=frame')
+
+
+
+def cameraView(request):
+    return StreamingHttpResponse(gen(PictureCamera()),
+                                 content_type='multipart/x-mixed-replace; boundary=frame')
+
+def camera_view(request, personnelNumber):
+    return render(request , 'camera.html' , {'personnelNumber':personnelNumber})
+
 
 
 def face_Recognition(request):

@@ -8,7 +8,7 @@
 <body>
     <h1>Live Camera</h1>
     <p>
-        <video id="video" width="480" height="350" autoplay></video>
+        <img id="video" src="{% url 'verifi:cameraView' %}">
     </p>
     <p>
         <button id="capture">Capture Photo</button>
@@ -51,6 +51,9 @@
             .then(data => {
                 if (data.status === 'success') {
                     alert('Photo saved successfully!');
+                    window.location.href = "/createModel/"; 
+                }else if(data.status === 'False'){
+                    alert('Photo False Face!');
                 } else {
                     alert('Error saving photo.');
                 }
@@ -62,3 +65,5 @@
     </script>
 </body>
 </html>
+<!--                     window.location.href = "/createModel/"; 
+ -->
