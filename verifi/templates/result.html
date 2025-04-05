@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+    div.gallery {
+      margin: 5px;
+      border: 1px solid #51ff00;
+      float: left;
+      width: 180px;
+    }
+    
+    div.gallery:hover {
+      border: 1px solid #777;
+    }
+    
+    div.desc {
+      padding: 1px;
+      text-align: center;
+    }
+
+    div.gallery1 {
+      margin: 5px;
+      border: 1px solid #fc0000;
+      float: left;
+      width: 180px;
+    }
+    
+    div.gallery1:hover {
+      border: 1px solid #777;
+    }
+    
+    </style>
+<body>
+        <!-- <p>
+            <label for="">photo</label>
+            <img src="../../media/old/photo.jpg" alt="" width="150" height="150">
+        </p>
+        <p></p>
+        <p>
+            <label for="">unknown</label>
+            <img src="../../media/unknow/unknown.jpg" alt="" width="150" height="150">
+        </p> -->
+        <p>
+        <div class="gallery">
+            <a target="_blank" href="#">
+              <img src="../../media/old/photo.jpg" alt="Cinque Terre" width="180" height="150">
+            </a>
+            <div class="desc">  شناس </div>
+          </div>
+        </p>
+        <p>
+            <div class="gallery1">
+                <a target="_blank" href="#">
+                  <img src="../../media/unknow/unknown.jpg" alt="Cinque Terre" width="180" height="150">
+                </a>
+                <div class="desc"> ناشناس</div>
+              </div>
+    <script>
+        // Refresh the page every 5 seconds (adjust the time interval as needed)
+        setTimeout(function () {
+            location.reload();
+        }, 10000);
+    </script>
+</body>
+</html>
