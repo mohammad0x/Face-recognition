@@ -28,6 +28,7 @@ def save_photo(request):
         if photo_data and personnelNumber:
             
 
+
             format, imgstr = photo_data.split(';base64,')
             ext = format.split('/')[-1]
             img_data = base64.b64decode(imgstr)
