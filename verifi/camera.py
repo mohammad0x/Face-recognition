@@ -1,123 +1,64 @@
 import cv2
-from django.http import HttpResponse
-import dlib
-from .recognition import faceRecognition
 import math
 import threading
-
-error_face = []
-countdown = 6
-face_cascade = cv2.CascadeClassifier("./haarcascade_frontalface_default.xml")
-detector = dlib.get_frontal_face_detector()
-
+import dlib
+from .recognition import faceRecognition
 
 class VideoCamera(object):
     def __init__(self):
-        # Using OpenCV to capture from device 0. If you have trouble capturing
-        # from a webcam, comment the line below out and use a video file
-        # instead.
-
-        # if 2 camera
-        self.video = cv2.VideoCapture(1)  #.rtsp://admin:Dd123456@172.16.157.9 & rtsp://admin:Dd123456@172.16.157.10'
-        # self.video2 =cv2.VideoCapture(1)
-
-        # if 2 camera
-        # if not self.video2.isOpened():
-        #     print("Error: Could not open camera 1.")
-        #     exit()
-
-        if not self.video.isOpened():
-            print("Error: Could not open camera 2.")
-            exit()
-
+        self.video1 = cv2.VideoCapture('rtsp://admin:Dd123456@172.16.157.9')
+        self.video2 = cv2.VideoCapture('rtsp://admin:Dd123456@172.16.157.10')
+        
+        if not self.video1.isOpened() or not self.video2.isOpened():
+            raise RuntimeError("Could not open one or both cameras")
+            
         self.frame_count = 0
-        self.frame_count1 = 0
-
-        # self.lock = threading.Lock()
-
-        # If you decide to use video.mp4, you must have this file in the folder
-        # as the main.py.
+        self.lock = threading.Lock()
+        self.face_detector = dlib.get_frontal_face_detector()
+        
+        self.crop_y = (100, 700)
+        self.crop_x = 500
 
     def __del__(self):
+        self.video1.release()
+        self.video2.release()
 
-        self.video.release()
-        # self.video2.release()
-        # self.input_images.release()
+    def _crop_frame(self, frame):
+        h, w = frame.shape[:2]
+        aspect_ratio = w / h
+        crop_width = math.floor(self.crop_y[1] - self.crop_y[0]) * aspect_ratio
+        return frame[self.crop_y[0]:self.crop_y[1], 
+                   self.crop_x:self.crop_x + int(crop_width)]
+
+    def _async_face_recognition(self, frame, cam_id):
+        with self.lock:
+            filename = f"frame_{self.frame_count}_cam{cam_id}.jpg"
+            faceRecognition(filename, frame)
 
     def get_frame(self):
+        # Read frames
+        ret1, frame1 = self.video1.read()
+        ret2, frame2 = self.video2.read()
+        
+        if not ret1 or not ret2:
+            return b''
 
-        # if 2 camera
-        success, frame = self.video.read()
-        # success, frame2 = self.video2.read()
-        if not success:
-            return HttpResponse('not success')
+        frame1 = self._crop_frame(frame1)
+        frame2 = self._crop_frame(frame2)
 
-        # if 2 camera
-        # self.input_images = cv2.hconcat([frame1 , frame2 ])
+        combined_frame = cv2.hconcat([frame1, frame2])
 
-        # We are using Motion JPEG, but OpenCV defaults to capture raw images,
-        # so we must encode it into JPEG in order to correctly display the
-        # video stream.
+        self.frame_count += 1
+        if self.frame_count % 10 == 0:
+            print(f"Processing frame {self.frame_count}")
+            
+            t1 = threading.Thread(target=self._async_face_recognition, 
+                                args=(frame1.copy(), 1))
+            t2 = threading.Thread(target=self._async_face_recognition,
+                                args=(frame2.copy(), 2))
+            t1.start()
+            t2.start()
 
-        # if zoom and crop 
-
-        # w, h = frame.shape[:2]
-        #
-        # n_retion = h / w
-        # frame = frame[100:700, 500:500+math.floor((700-100)*n_retion)]
-
-        # if 2 camera
-
-        # frame = []
-        # frame.append(frame1)
-        # frame.append(frame2)
-
-        self.frame_count1 += 1
-        if self.frame_count1 % 10 == 0:
-            self.frame_count += 1
-            print(self.frame_count)
-
-            # if 2 camera
-            # for i , f in enumerate(frame):
-            faceRecognition(f"frame_{self.frame_count}.jpg", frame)
-
-        ret, jpeg = cv2.imencode('.jpg',frame)
-
+        _, jpeg = cv2.imencode('.jpg', combined_frame, 
+                              [int(cv2.IMWRITE_JPEG_QUALITY), 75])
         return jpeg.tobytes()
-
-    # def get_frame(self):
-    #     def process_frame(video, camera_id):
-    #         nonlocal frame1, frame2
-    #         success, frame = video.read()
-    #         if not success:
-    #             return
-
-    #         with self.lock:
-    #             if camera_id == 1:
-    #                 frame1 = frame
-    #             else:
-    #                 frame2 = frame
-
-    #             self.frame_count1 += 1
-    #             if self.frame_count1 % 10 == 0:
-    #                 self.frame_count += 1
-    #                 print(self.frame_count)
-    #                 faceRecognition(f"frame_{self.frame_count}.jpg", frame)
-
-    #     frame1, frame2 = None, None
-
-    #     thread1 = threading.Thread(target=process_frame, args=(self.video1, 1))
-    #     thread2 = threading.Thread(target=process_frame, args=(self.video2, 2))
-
-    #     thread1.start()
-    #     thread2.start()
-
-    #     thread1.join()
-    #     thread2.join()
-
-    #     if frame1 is not None and frame2 is not None:
-    #         self.input_images = cv2.hconcat([frame1, frame2])
-    #         ret, jpeg = cv2.imencode('.jpg', self.input_images)
-    #         return jpeg.tobytes()
-    #     else:
-    #         return HttpResponse('not success')
