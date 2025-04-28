@@ -33,3 +33,8 @@ You can also use Docker with the following commands:
 ## RUN
 
 __sudo docker-compose up__
+
+
+# OR
+
+__pyhon3 manage.py runserver__
