@@ -1,6 +1,6 @@
 ## Face recognition project (face detection, face recognition) with the Django framework.
 
-In this project, the dlib library has been used in a custom way.
+In this project, the # dlib library has been used in a custom way.
 Generally, it receives images in separate forms, then recognizes each form and compares it with the database model, and I can separate the unknowns and the known ones and even save their images in separate folders...
 
 # The algorithm has an accuracy of 98.86 You can see part of the algorithm in the following link to better understand it:
