@@ -32,4 +32,4 @@ You can also use Docker with the following commands:
 
 ## RUN
 
-# sudo docker-compose up
+** sudo docker-compose up
