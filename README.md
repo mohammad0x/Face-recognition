@@ -24,4 +24,12 @@ To set the camera address to take a picture, you can set the address in the `pic
 
 Also, get a log every 5 seconds with the address ` 127.0.0.1:8000/log ‍‍`.
 
-Then you can use `127.0.0.1:8000/admin` to view all logs and results or built models or to edit and delete
+Then you can use `127.0.0.1:8000/admin` to view all logs and results or built models or to edit and delete.
+
+
+
+You can also use Docker with the following commands:
+
+## RUN
+
+# sudo docker-compose up
