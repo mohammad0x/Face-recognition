@@ -3,10 +3,16 @@ import cv2
 import numpy as np
 import shutil
 from .models import *
-from celery import shared_task
-import os
 import logging
-import time
+from .views import *
+from django.utils.timezone import now, make_aware
+from django.shortcuts import render, redirect
+from datetime import datetime, timedelta
+from jdatetime import datetime as jdatetime_datetime
+import requests
+from django.contrib import messages
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -17,81 +23,47 @@ noyz_face = []
 known_face_encodings = []
 known_face_names = []
 
-predictor = dlib.shape_predictor("../shape_predictor_68_face_landmarks.dat")
+predictor = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
 face_recognizer = dlib.face_recognition_model_v1(
-    "../dlib_face_recognition_resnet_model_v1.dat"
+    "./dlib_face_recognition_resnet_model_v1.dat"
 )
 detector = dlib.get_frontal_face_detector()
 
 
-def extract_face_descriptor(image):
+
+
+
+    
+
+
+def extract_face_descriptor(name, image):
     try:
         faces = detector(image)
     except:
-        pass #faceRecognition()#.delay()
-    if len(faces) == 1:
+        pass
 
-        landmarks = predictor(image, faces[0])
+    if len(faces) > 0:
+
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        landmarks = predictor(gray, faces[0])
 
         face_descriptor = face_recognizer.compute_face_descriptor(image, landmarks)
         return np.array(face_descriptor)
     else:
         return False
 
-# @shared_task
-def faceRecognition(name , image):
+
+def faceRecognition(name, image):
     while True:
-        threshold = 0.4
+        threshold = 0.6
 
-
-        new_face = []
-        name_face = []
         db_face = []
-        reference_image_new = []
-        base_dir = './media/' #Path(__file__).resolve().parent.parent
-        # time.sleep(2)
 
+        point = extract_face_descriptor(name, np.array(image))
 
+        if point is False:
+            break
 
-        # for img in os.listdir("./media/crop"):
-        #     time.sleep(1)
-        #     img = f"./media/crop/{img}"
-        # image = cv2.imread(img)
-        #
-        # if Face.objects.filter(name=name, verify=True):
-        #         try:
-        #             os.remove(f"./media/crop/{name}")
-        #         except:
-        #             pass
-        point = extract_face_descriptor(np.array(image))
-        if Face.objects.filter(name=name , noise=True):
-            Face.objects.filter(name=name).update(point=point)
-
-            name_face.append(name)
-        # reference_image = image
-        # print(name)
-        try:
-            Face.objects.filter(name=name).update(point=point)
-        except:
-            pass
-
-
-        facee = Face.objects.filter(verify=False)
-        for faces in facee:
-            reference_image_new.append(faces.point)
-
-        # for num in range(len(reference_image_new)):
-        #     if reference_image_new[num] is not None :
-        #         fix = reference_image_new[num].replace("[", "").replace("]", "")
-        #         value = fix.split()
-        #         aray = [item for item in value]
-        #         dbmodel = []
-        #         for item in aray:
-        #             try:
-        #                 dbmodel.append(float(item))
-        #             except:
-        #                 pass
-        #         new_face.append(np.array(dbmodel))
         clean = []
         name_clean = []
         face = Dbmodel.objects.all()
@@ -110,45 +82,53 @@ def faceRecognition(name , image):
                 except:
                     pass
             db_face.append(np.array(dbmodel_2))
-        # time.sleep(2)
 
-        # print('11')
         for item in range(len(db_face)):
-            # for number in range(len(new_face)):
-            #     if len(new_face[number]) != 0:
-            # print('11.5')
-            distance = np.linalg.norm(db_face[item] - point)# new_face[number]
-            # print('22')
+            distance = np.linalg.norm(db_face[item] - point)
             if distance < threshold:
-                # try:
-                    # time.sleep(2)
-                if Result.objects.create(name=name_clean[item], recognition=name):#name_face[number]
-                    Face.objects.filter(name=name).update(verify=True)
-                                #shutil.move(f'{name_face[number]}',
-                                       # f'./{name_face[number].split("/")[1]}/old/')
-                    print('save')
+                if Result.objects.filter(recognition=name).exists():
                     break
 
+                last_entry = Result.objects.filter(name=name_clean[item],
+                                                   date=jdatetime_datetime.now().strftime('%d %B %Y')).order_by(
+                    '-time').first()
+                if last_entry:
+
+                    last_entry_datetime = datetime.combine(now().date(), last_entry.time)
+                    last_entry_datetime = make_aware(last_entry_datetime)
+                    current_datetime = now()
+
+                    time_diff = current_datetime - last_entry_datetime
+                    if time_diff.total_seconds() < 10:
+                        log.objects.create(name=name_clean[item],status = 'duplicate')
+                        cv2.imwrite(f"./media/old/photo.jpg", image)
+                        return 'duplicate'
+                  
+
+                if Result.objects.create(name=name_clean[item], recognition=name):
+                    log.objects.create(name=name_clean[item],status = 'create')
+                    cv2.imwrite(f"./media/old/photo.jpg", image)
+                    return 'create'
 
 
-                        #         if f'./old/{name_face[number].split("/")[3]}':
-                        #             # print(f'./media/crop/{name_face[number].split("/")[3]}')
-                        #             Face.objects.filter(name=f'./media/crop/{name_face[number].split("/")[3]}').update(verify=True)
-                        #
-                # except:
-                #     print('not')
-                #     continue
 
 
-        #     else:
-        #
-        #                 try:
-        #                     time.sleep(1.5)
-        #                     shutil.move(f'{name_face[number]}',
-        #                                 f'./{name_face[number].split("/")[1]}/unknow/')
-        #                 except:
-        #                     pass
-        # continue
+            else:
+                pass
+
+        # unknown
+
+        if not Result.objects.filter(recognition=name).exists():
+            cv2.imwrite(f"./media/unknow/unknown.jpg", image)
+            log.objects.create(name=name,status = 'unknown')   
+            return 'unknown'
+
+
+        break
+
+
+            
+       
+        
 
 # celery -A FaceGuard worker -l info
-print('finish')

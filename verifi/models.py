@@ -1,9 +1,12 @@
+import pytz
 from django.db import models
 
 # Create your models here.
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from jdatetime import datetime as jdatetime_datetime
+from jalali_date import datetime2jalali, date2jalali
 
 
 class MyUserManager(BaseUserManager):
@@ -72,29 +75,58 @@ class MyUser(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-    
-    
+
+
 class Dbmodel(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100 , verbose_name="نام و نام خانوادگی")
     image = models.ImageField(upload_to='faces/')
+    personnelNumber = models.CharField(max_length=30 ,unique = True, verbose_name = "کد پرسنلی")
+    date_of_birth = models.CharField(max_length=30 , verbose_name="سال تولد")
+    field = models.CharField(max_length=50 , verbose_name = "رشته تحصیلی")
     date = models.DateTimeField(auto_now_add=True)
-    point =models.TextField(null=True , blank=False)
-    
+    point = models.TextField(null=True, blank=False)
+
     def __str__(self) -> str:
         return self.name
 
 
-class Face(models.Model):
-    name = models.CharField(max_length=50,unique=True)
-    date = models.DateTimeField(auto_now_add=True)
-    verify = models.BooleanField(default=False)
-    noise = models.BooleanField(default=False)
-    point =models.TextField(null=True , blank=False)
-    
 class Result(models.Model):
     name = models.CharField(max_length=100)
-    recognition = models.CharField(max_length=100,unique=True)
-    date = models.DateTimeField(auto_now_add=True)
+    recognition = models.CharField(max_length=100, unique=True)
+    date = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y'), max_length=100)
+    time = models.TimeField(auto_now_add=True)
     noise = models.BooleanField(default=False)
+    location = models.CharField(max_length=2, null=True, blank=False)
 
-    
+    def __str__(self) -> str:
+        return self.name
+
+class log(models.Model):
+    name = models.CharField(max_length=100)
+    status = models.CharField(max_length=100)
+    time = models.DateTimeField(auto_now_add=timezone.now)
+
+    def __str__(self):
+        return self.status
+
+class Attendance(models.Model):
+    STATUS_CHOICES = (
+        ('1', 'humanities'),
+        ('2', 'library'),
+        ('3', 'administrative'),
+        ('4', 'engineering'),
+        ('5', 'sama'),
+        ('6', 'medical sciences'),
+    )
+
+    user = models.ForeignKey(Result, on_delete=models.CASCADE)
+    flag = models.BooleanField(default=False)
+    check_in_date = models.CharField(max_length=100)
+    check_in_time = models.TimeField(auto_now_add=timezone.now, unique=True)
+    location = models.CharField(max_length=5, choices=STATUS_CHOICES)
+    login_or_logout = models.BooleanField(default=False)
+
+
+class Getdate(models.Model):
+    text = models.CharField(max_length=50)
+    date_time = models.CharField(default=jdatetime_datetime.now().strftime('%d %B %Y'), max_length=100, unique=True)
