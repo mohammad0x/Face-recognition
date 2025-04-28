@@ -84,16 +84,6 @@ def uploadImage(request, personnelNumber):
     return render(request, 'image.html')
 
 
-# def savePoint(request):
-#     if request.method == "POST":
-#         image = request.POST['image']
-#         name = request.POST['name']
-#         img = cv2.imread(f'./media/{image}')
-#         # face = Crop(name, img)
-#     img = Dbmodel.objects.all()
-#     return render(request, 'save.html', {'img': img})
-#
-
 def VideoView(request):
     # countdown = 6
     # faceRecognition()#.apply_async(countdown=countdown)   #apply_async()
@@ -103,8 +93,7 @@ def VideoView(request):
 
 def gen(camera):
     while True:
-        countdown = 6
-        attendance.apply_async(countdown=countdown)
+
         frame = camera.get_frame()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')

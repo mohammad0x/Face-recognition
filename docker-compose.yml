@@ -13,15 +13,7 @@ services:
       - "/dev/bus/usb:/dev/bus/usb"
     environment:
       - DJANGO_SETTINGS_MODULE=FaceGuard.settings
-    depends_on:
-      - redis 
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+
 
 volumes:
   db_volume:
-  redis_data:
