@@ -26,8 +26,6 @@ def save_photo(request):
         personnelNumber = request.POST['personnelNumber']
 
         if photo_data and personnelNumber:
-            
-
 
             format, imgstr = photo_data.split(';base64,')
             ext = format.split('/')[-1]
@@ -41,16 +39,15 @@ def save_photo(request):
             image = cv2.imread('./media/photos/photo.jpg')
             result = extract_face_descriptor(personnelNumber, np.array(image))
             outcome = Dbmodel.objects.filter(personnelNumber=personnelNumber).update(point=result)
-            
-            if outcome == 1 :
-                if Dbmodel.objects.filter(personnelNumber=personnelNumber  , point = False):
+
+            if outcome == 1:
+                if Dbmodel.objects.filter(personnelNumber=personnelNumber, point=False):
                     return JsonResponse({'status': 'False'})
 
-                return JsonResponse({'status': 'success', 
-                                 'path': photo_path,
-                                 'redirect_url': reverse('verifi:createModel'),
-                                 })
-           
+                return JsonResponse({'status': 'success',
+                                     'path': photo_path,
+                                     'redirect_url': reverse('verifi:createModel'),
+                                     })
 
     return JsonResponse({'status': 'error'}, status=400)
 
@@ -88,12 +85,11 @@ def VideoView(request):
     # countdown = 6
     # faceRecognition()#.apply_async(countdown=countdown)   #apply_async()
 
-    return render(request, 'stream.html' )
+    return render(request, 'stream.html')
 
 
 def gen(camera):
     while True:
-
         frame = camera.get_frame()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
@@ -104,14 +100,13 @@ def video_feed(request):
                                  content_type='multipart/x-mixed-replace; boundary=frame')
 
 
-
 def cameraView(request):
     return StreamingHttpResponse(gen(PictureCamera()),
                                  content_type='multipart/x-mixed-replace; boundary=frame')
 
-def camera_view(request, personnelNumber):
-    return render(request , 'camera.html' , {'personnelNumber':personnelNumber})
 
+def camera_view(request, personnelNumber):
+    return render(request, 'camera.html', {'personnelNumber': personnelNumber})
 
 
 def face_Recognition(request):
@@ -122,13 +117,13 @@ def face_Recognition(request):
 
 def logView(request):
     context = {
-        'log':log.objects.all().order_by('-time')
+        'log': log.objects.all().order_by('-time')
     }
-    return render(request , 'log.html' , context)
+    return render(request, 'log.html', context)
 
 
 def result(request):
-    return render(request , 'result.html')
+    return render(request, 'result.html')
 # def information(request):
 #     res_t = Result.objects.filter(noise=False).order_by('-date')
 #     res_f = Face.objects.filter(verify=False).order_by('-date')
