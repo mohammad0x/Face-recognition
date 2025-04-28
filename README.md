@@ -7,7 +7,7 @@ Generally, it receives images in separate forms, then recognizes each form and c
 
 ref : https://medium.com/@ageitgey/machine-learning-is-fun-part-4-modern-face-recognition-with-deep-learning-c3cffc121d78
 
-You can receive images from two cameras at the same time. To set it up, refer to the following file: verifi/camera.py
+You can receive images from two cameras at the same time. To set it up, refer to the following file:`` verifi/camera.py ``
 
 And to view the output of the camera views:
 
