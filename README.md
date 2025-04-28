@@ -9,6 +9,6 @@ ref : https://medium.com/@ageitgey/machine-learning-is-fun-part-4-modern-face-re
 
 You can receive images from two cameras at the same time. To set it up, refer to the following file:`` verifi/camera.py ``
 
-And to view the output of the camera views:
+And to view the output of the camera views: `` 127.0.0.1:8000/stream ``
 
-127.0.0.1:8000/stream
+
