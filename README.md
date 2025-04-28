@@ -11,7 +11,8 @@ You can receive images from two cameras at the same time. To set it up, refer to
 
 And to view the output of the camera views: `` 127.0.0.1:8000/stream ``
 
-To create a new model (for people who are going to be recognized), follow this address:‍‍`` ‍1‍2‍7.0.0.1/createMode ``
+
+To create a new model (for people who are going to be recognized), follow this address:‍‍`` ‍1‍2‍7.0.0.1/createModel ``
 
 First, it receives specifications such as name or ID for the user from you, then to receive the model's photo, there are two solutions. First, get the saved photo. Second, take a photo from the camera.
 
