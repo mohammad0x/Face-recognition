@@ -3,6 +3,10 @@
 In this project, the  ``dlib`` library has been used in a custom way.
 Generally, it receives images separately, then recognizes each form and compares it with the database model, and I can separate unknown and recognized items and even save their images in separate folders...
 
+To receive images from two cameras simultaneously and optimize resources, the ``Threading`` library has been used.
+
+And `` celery`` has also been used to record images simultaneously, which you can enable from the ‍`views.py` and `settings.py` files if needed.
+
 # The algorithm has an accuracy of 98.86 You can see part of the algorithm in the following link to better understand it:
 
 ref : https://medium.com/@ageitgey/machine-learning-is-fun-part-4-modern-face-recognition-with-deep-learning-c3cffc121d78
